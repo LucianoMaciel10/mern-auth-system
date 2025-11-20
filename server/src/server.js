@@ -24,7 +24,6 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
-app.get("/", (req, res) => res.send("API Working!"));
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 
