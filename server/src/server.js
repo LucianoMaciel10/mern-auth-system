@@ -5,28 +5,34 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+const __dirname = path.resolve();
+
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      credentials: true,
+      origin: "http://localhost:5173",
+    })
+  );
+}
 
 app.get("/", (req, res) => res.send("API Working!"));
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../public')));
-  
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
   });
 }
 
