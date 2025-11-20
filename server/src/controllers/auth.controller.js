@@ -2,7 +2,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import transporter from "../config/nodemailer.js";
-import { EMAIL_VERIFY_TEMPLATE, PASSWORD_RESET_TEMPLATE } from "../config/emailTemplates.js";
+import {
+  EMAIL_VERIFY_TEMPLATE,
+  PASSWORD_RESET_TEMPLATE,
+} from "../config/emailTemplates.js";
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -42,7 +45,11 @@ export const register = async (req, res) => {
       text: `Welcome to My App website. Your account has ben created with email id: ${email}`,
     };
 
-    await transporter.sendMail(mailOptions);
+    if (process.env.NODE_ENV === "production") {
+      console.log("Skipping email sending in production (SMTP blocked)");
+    } else {
+      await transporter.sendMail(mailOptions);
+    }
 
     res.status(201).json({ success: true });
   } catch (error) {
@@ -122,7 +129,10 @@ export const sendVerifyOtp = async (req, res) => {
       to: user.email,
       subject: "Account Verification OTP",
       // text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-      html: EMAIL_VERIFY_TEMPLATE.replace('{{otp}}', otp).replace('{{email}}', user.email)
+      html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        user.email
+      ),
     };
 
     await transporter.sendMail(mailOptions);
@@ -206,7 +216,10 @@ export const sendResetOtp = async (req, res) => {
       to: email,
       subject: "Password Reset OTP",
       // text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
-      html: PASSWORD_RESET_TEMPLATE.replace('{{otp}}', otp).replace('{{email}}', email)
+      html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace(
+        "{{email}}",
+        email
+      ),
     };
     await transporter.sendMail(mailOptions);
 
@@ -265,11 +278,11 @@ export const resetPassword = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
-    user.password = hashedPassword
-    user.resetOtp = ''
-    user.resetOtpExpireAt = 0
-    user.save()
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetOtp = "";
+    user.resetOtpExpireAt = 0;
+    user.save();
 
     res.status(200).json({
       success: true,
@@ -278,4 +291,4 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
-}
+};
