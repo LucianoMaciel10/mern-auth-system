@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "build": "cd ../client && pnpm install && pnpm run build && cp -r dist ../server/public"
   },
   "keywords": [],
   "author": "",
