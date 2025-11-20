@@ -2,6 +2,10 @@
 
 Full-stack authentication system with email verification and password reset. Built with MongoDB, Express, React, and Node.js.
 
+🔗 **Live Demo:** [https://mern-auth-system-3-kycr.onrender.com](https://mern-auth-system-3-kycr.onrender.com)
+
+> ⚠️ First load may take 30-50 seconds (Render free tier cold start)
+
 ## 🚀 Features
 
 - **User Registration & Login** - JWT token-based authentication
@@ -26,7 +30,7 @@ Full-stack authentication system with email verification and password reset. Bui
 - MongoDB + Mongoose
 - JWT (jsonwebtoken)
 - bcryptjs
-- Nodemailer (Brevo SMTP)
+- Axios (Brevo API client)
 - Zod validation
 
 ## 📁 Project Structure
@@ -75,9 +79,7 @@ npm install
 ```env
 MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/dbname
 JWT_SECRET=your_super_secret_key_here
-CLIENT_URL=http://localhost:5173
-SMTP_USER=your_brevo_smtp_user
-SMTP_PASSWORD=your_brevo_smtp_password
+BREVO_API_KEY=your_brevo_api_key
 SENDER_EMAIL=noreply@yourapp.com
 PORT=4000
 NODE_ENV=development
@@ -144,39 +146,47 @@ npm run dev
 
 - Passwords hashed with bcryptjs (10 rounds)
 - JWT tokens stored in HTTP-only cookies (7 days)
-- CORS restricted to CLIENT_URL
+- CORS enabled for cross-origin requests
 - Input validation on client and server
 - OTP expiration (verify: 24h, reset: 15min)
 
 ## 📧 Email Configuration
 
-Uses **Brevo (Sendinblue)** SMTP for:
+Uses **Brevo API** (v3) for sending emails:
 - Account verification OTP
 - Password reset OTP
 - Welcome emails
+
+### Setup
+1. Create account at [Brevo](https://www.brevo.com/)
+2. Get API key from Settings → API Keys
+3. Verify sender email in Senders & IP
+4. Add `BREVO_API_KEY` to environment variables
 
 Email templates: `server/src/config/emailTemplates.js`
 
 ## 🚀 Deployment
 
-### Quick Deploy to Render
+Deployed on **Render** with separate services for frontend and backend.
 
-**Backend:**
+### Backend Configuration
 ```
 Root Directory: server
 Build Command: npm install
 Start Command: npm start
+Environment: Node.js
 ```
 
-**Frontend:**
+### Frontend Configuration
 ```
 Root Directory: client
 Build Command: npm install && npm run build
 Publish Directory: dist
+Type: Static Site
 ```
 
 **Environment Variables:**
-Set all `.env` variables in Render dashboard.
+All `.env` variables must be set in Render dashboard for each service.
 
 ### MongoDB Setup
 1. Create free cluster at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
@@ -187,12 +197,13 @@ Set all `.env` variables in Render dashboard.
 ## 🐛 Troubleshooting
 
 **CORS errors:**
-- Verify `CLIENT_URL` matches frontend URL
-- Check `credentials: true` in CORS config
+- Verify CORS configuration in backend
+- Check browser console for specific error details
 
 **Email not sending:**
-- Verify Brevo credentials
-- Check sender email authorization
+- Verify Brevo API key is correct
+- Check sender email is verified in Brevo dashboard
+- Review Brevo API usage limits
 
 **MongoDB connection:**
 - Whitelist IP in MongoDB Atlas
@@ -209,4 +220,6 @@ ISC License
 
 ---
 
-**Note:** This is a learning project demonstrating full-stack MERN authentication with email verification and secure password management.
+**Live Demo:** [https://mern-auth-system-3-kycr.onrender.com](https://mern-auth-system-3-kycr.onrender.com)
+
+*Built as a learning project to demonstrate full-stack MERN authentication with email verification and secure password management.*
