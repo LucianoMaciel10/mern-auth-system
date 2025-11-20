@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import "tailwindcss";
+
+* {
+  font-family: "Outfit", sans-serif;
+}
+
+.exact-top {
+  top: calc(var(--spacing) * 6.3) /* 1.625rem = 26px */;
+}
+
+/* Quitar fondo blanco del autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #333A5C inset !important;
+  -webkit-text-fill-color: #a5b4fc !important; /* Color del texto */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Para Firefox */
+input:-moz-autofill {
+  background-color: #333A5C !important;
+  color: #a5b4fc !important;
+}
