@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import transporter from "../config/nodemailer.js";
 import {
   EMAIL_VERIFY_TEMPLATE,
   PASSWORD_RESET_TEMPLATE,
 } from "../config/emailTemplates.js";
+import { sendEmailBrevo } from "../config/brevo.js";
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -38,18 +38,11 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
+    await sendEmailBrevo({
       to: email,
       subject: "Welcome to My App",
-      text: `Welcome to My App website. Your account has ben created with email id: ${email}`,
-    };
-
-    if (process.env.NODE_ENV === "production") {
-      console.log("Skipping email sending in production (SMTP blocked)");
-    } else {
-      await transporter.sendMail(mailOptions);
-    }
+      text: `Welcome to My App website. Your account has been created with email id: ${email}`,
+    });
 
     res.status(201).json({ success: true });
   } catch (error) {
@@ -124,18 +117,14 @@ export const sendVerifyOtp = async (req, res) => {
 
     await user.save();
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
+    await sendEmailBrevo({
       to: user.email,
       subject: "Account Verification OTP",
-      // text: `Your OTP is ${otp}. Verify your account using this OTP.`,
       html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace(
         "{{email}}",
         user.email
       ),
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     res
       .status(200)
@@ -211,17 +200,14 @@ export const sendResetOtp = async (req, res) => {
 
     await user.save();
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
+    await sendEmailBrevo({
       to: email,
       subject: "Password Reset OTP",
-      // text: `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`,
       html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace(
         "{{email}}",
         email
       ),
-    };
-    await transporter.sendMail(mailOptions);
+    });
 
     res.status(200).json({ success: true, message: "OTP send to your email" });
   } catch (error) {
