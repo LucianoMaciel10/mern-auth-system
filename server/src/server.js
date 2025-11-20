@@ -15,14 +15,15 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(cookieParser());
 
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    cors({
-      credentials: true,
-      origin: "http://localhost:5173",
-    })
-  );
-}
+app.use(
+  cors({
+    credentials: true,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://mern-auth-system-3-kycr.onrender.com"
+        : "http://localhost:5173",
+  })
+);
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
