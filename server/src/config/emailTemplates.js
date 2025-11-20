@@ -1,4 +1,4 @@
-export const EMAIL_VERIFY_TEMPLATE = `export const EMAIL_VERIFY_TEMPLATE = 
+export const EMAIL_VERIFY_TEMPLATE = `
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -106,7 +106,7 @@ export const EMAIL_VERIFY_TEMPLATE = `export const EMAIL_VERIFY_TEMPLATE =
 </body>
 </html>
 
-`;
+`
 
 export const PASSWORD_RESET_TEMPLATE = `
 
@@ -216,4 +216,5 @@ export const PASSWORD_RESET_TEMPLATE = `
   </table>
 </body>
 </html>
-`;
+`
+

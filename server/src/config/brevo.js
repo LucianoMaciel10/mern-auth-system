@@ -5,6 +5,7 @@ export const brevoClient = axios.create({
   headers: {
     "api-key": process.env.BREVO_API_KEY,
     "Content-Type": "application/json",
+    "accept": "application/json",
   },
 });
 
@@ -17,7 +18,7 @@ export const brevoClient = axios.create({
  */
 export const sendEmailBrevo = async ({ to, subject, text, html }) => {
   try {
-    await brevoClient.post("/smtp/email", {
+    const payload = {
       sender: {
         email: process.env.SENDER_EMAIL,
         name: "MERN Auth System",
@@ -28,13 +29,20 @@ export const sendEmailBrevo = async ({ to, subject, text, html }) => {
         },
       ],
       subject,
-      textContent: text || undefined,
-      htmlContent: html || undefined,
-    });
+    };
 
-    console.log("Email enviado a:", to);
+    if (html) {
+      payload.htmlContent = html;
+    } else if (text) {
+      payload.textContent = text;
+    }
+
+    const response = await brevoClient.post("/smtp/email", payload);
+
+    console.log("✅ Email enviado a:", to);
+    return response.data;
   } catch (error) {
-    console.error(error.response?.data || error);
-    throw new Error("Error sending email");
+    console.error("❌ Error enviando email:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Error sending email");
   }
 };
